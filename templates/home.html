@@ -1,0 +1,82 @@
+<html>
+<head>
+  <title>Chatroom</title>
+  <style>
+    /* Define some CSS styles for the web page */
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background-color: lightblue;
+    }
+    h1 {
+      text-align: center;
+      color: white;
+    }
+    .chatbox {
+      width: 500px;
+      height: 500px;
+      margin: auto;
+      border: 5px solid black;
+      overflow-y: scroll;
+    }
+    .user {
+      color: green;
+      font-weight: bold;
+    }
+    .bot {
+      color: red;
+      font-weight: bold;
+    }
+    input[type=text] {
+      width: 400px;
+      height: 40px;
+      font-size: 20px;
+    }
+    input[type=submit] {
+      width: 100px;
+      height: 40px;
+      font-size: 20px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Display an introductory page with a centered text and a chatbox -->
+  <h1>An online web chat room</h1>
+  <div class="chatbox" id="chatbox">
+    <!-- Display a welcome message from the chatbot -->
+    <p class="bot">Chatbot: Hello, I am a chatbot. You can talk to me about anything.</p>
+  </div>
+  <!-- Create a form to send user input to the chatbot -->
+  <form method="POST" action="{{ url_for('get_bot_response') }}">
+    <input type="text" id="user_input" name="user_input" placeholder="Type something here...">
+    <input type="submit" id="submit" value="Send">
+  </form>
+  <!-- Use some JavaScript to handle the form submission and display the chatbot response -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script>
+    $(document).ready(function() {
+      // When the user submits the form
+      $("#submit").click(function(e) {
+        // Prevent the default action of reloading the page
+        e.preventDefault();
+        // Get the user input from the text box
+        var user_input = $("#user_input").val();
+        // Clear the text box
+        $("#user_input").val("");
+        // Append the user input to the chatbox with some formatting
+        $("#chatbox").append("<p class='user'>You: " + user_input + "</p>");
+        // Scroll to the bottom of the chatbox
+        $("#chatbox").scrollTop($("#chatbox")[0].scrollHeight);
+        // Send an AJAX GET request to the flask app with the user input
+        $.get("/get", { msg: user_input }).done(function(data) {
+          // Get the chatbot response from the data
+          var bot_response = data;
+          // Append the bot response to the chatbox with some formatting
+          $("#chatbox").append("<p class='bot'>Chatbot: " + bot_response + "</p>");
+          // Scroll to the bottom of the chatbox
+          $("#chatbox").scrollTop($("#chatbox")[0].scrollHeight);
+        });
+      });
+    });
+  </script>
+</body>
+</html>
